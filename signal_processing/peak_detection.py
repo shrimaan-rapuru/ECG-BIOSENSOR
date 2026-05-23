@@ -21,7 +21,33 @@ def compute_hrv(peaks, fs=533):
         return None
     rr = np.diff(peaks) / fs * 1000
     return {'SDNN_ms': round(np.std(rr), 2), 'RMSSD_ms': round(np.sqrt(np.mean(np.diff(rr)**2)), 2), 'mean_RR_ms': round(np.mean(rr), 2), 'num_beats': len(peaks)}
-
+def plot_single_beat(filtered, peaks, timestamps, fs=533):
+    if len(peaks) < 3:
+        return
+    center_peak = peaks[len(peaks)//2]
+    start = center_peak - int(0.3 * fs)
+    end = center_peak + int(0.5 * fs)
+    if start < 0 or end > len(filtered):
+        return
+    t = timestamps[start:end]
+    f = filtered[start:end]
+    t_relative = t - t[0]
+    r_peak_time = t_relative[int(0.3 * fs)]
+    plt.figure(figsize=(10, 5))
+    plt.plot(t_relative, f, color='blue', linewidth=1.5)
+    plt.axvline(x=r_peak_time, color='red', linestyle='--', alpha=0.5, label='R-peak')
+    plt.annotate('R', xy=(r_peak_time, f[int(0.3*fs)]),
+                xytext=(r_peak_time+0.02, f[int(0.3*fs)]+10),
+                fontsize=12, color='red')
+    plt.title('Single Heartbeat — PQRST Wave Analysis')
+    plt.xlabel('Time (seconds)')
+    plt.ylabel('ADC Value')
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    plt.savefig('../results/experiment_1/single_beat_pqrst.png', dpi=150)
+    print("Single beat plot saved to results/experiment_1/single_beat_pqrst.png")
+    plt.show()
 def main():
     df = pd.read_csv('../results/experiment_1/resting_trial_5.csv')
     raw = df['ecg_value'].values.astype(float)
@@ -56,7 +82,9 @@ def main():
     plt.grid(True)
     plt.tight_layout()
     plt.savefig('../results/experiment_1/peak_detection.png', dpi=150)
+    print("\nPlot saved to results/experiment_1/peak_detection.png")
     plt.show()
+    plot_single_beat(filtered, peaks, timestamps, fs=fs)
 
 if __name__ == "__main__":
     main()

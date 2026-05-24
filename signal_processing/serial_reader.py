@@ -48,5 +48,5 @@ def save_csv(timestamps, data, filename):
 
 if __name__ == "__main__":
     timestamps, data = read_ecg()
-    filename = f"../results/experiment_1/resting_trial_5.csv"
+    filename = f"../results/experiment_1/exercise_trial_1.csv"
     save_csv(timestamps, data, filename)

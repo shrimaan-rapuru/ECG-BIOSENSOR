@@ -1,0 +1,15 @@
+python -c "
+import csv
+data = [
+    ['Reading', 'Apple_Watch_BPM', 'ECG_System_BPM', 'Difference'],
+    [1, 97, 102, 5],
+    [2, 98, 96, -2],
+    [3, 98, 102, 4],
+    [4, 96, 96, 0],
+    [5, 96, 102, 6],
+]
+with open('results/apple_watch_validation.csv', 'w', newline='') as f:
+    writer = csv.writer(f)
+    writer.writerows(data)
+print('Saved')
+"

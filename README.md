@@ -3,7 +3,7 @@
 > Integrating Signal Processing, Robustness Analysis, and Physiological Visualization
 
 **Shrimaan Rapuru** | The Early College at Guilford | Summer 2026
-[Technical Report](report/) | [Results](results/) | [Dashboard](dashboard/)
+[Technical Report](docs/ECG_Technical_Report_Final.pdf) | [Results](results/) | [Dashboard](dashboard/)
 
 ---
 

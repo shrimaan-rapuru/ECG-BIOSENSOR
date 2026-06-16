@@ -53,18 +53,15 @@ def calculate_hrv(peaks, fs=533):
 
 @st.cache_data
 def load_ecg_data():
-    url = "https://raw.githubusercontent.com/shrimaan-rapuru/ECG-BIOSENSOR/main/results/experiment_1/resting_trial_3.csv"
+    url = "https://raw.githubusercontent.com/shrimaan-rapuru/ECG-BIOSENSOR/master/results/experiment_1/resting_trial_3.csv"
     try:
         df = pd.read_csv(url)
         raw = df['ecg_value'].values.astype(float)
         timestamps = df['timestamp'].values
         skip = int(2 * 533)
         raw = raw[skip:]
-        timestamps = timestamps[skip:]
+        timestamps = np.arange(len(raw)) / 533.0
         raw = np.clip(raw, np.percentile(raw, 1), np.percentile(raw, 99))
-        st.write("CSV loaded. Columns:", list(df.columns))
-        st.write(df.head(2))
-        st.caption(f"CSV loaded: {len(df)} rows, columns: {list(df.columns)}")
         return -raw, timestamps
     except Exception as e:
         st.error(f"Could not load data: {e}")
@@ -77,7 +74,6 @@ st.sidebar.markdown("*Resting Trial 3, Subject 2*")
 st.sidebar.markdown("---")
 window_size = st.sidebar.slider("Display Window (seconds)", 5, 28, 10)
 show_raw = st.sidebar.checkbox("Show Raw Signal", value=False)
-playback_speed = st.sidebar.select_slider("Playback Speed", options=["0.5x", "1x", "2x", "4x"], value="1x")
 st.sidebar.markdown("---")
 st.sidebar.markdown("**Filter Settings:**")
 st.sidebar.markdown("- Butterworth Bandpass: 0.5-40 Hz")
@@ -96,7 +92,6 @@ st.markdown("*Subject 2 | Resting Trial 3 | fs = 533.3 Hz | Butterworth Bandpass
 
 # ── LOAD DATA ──
 raw, timestamps = load_ecg_data()
-
 if raw is None:
     st.error("Could not load ECG data.")
     st.stop()
@@ -106,6 +101,8 @@ filtered = full_pipeline(raw, fs=fs)
 peaks = detect_peaks(filtered, fs=fs)
 bpm = calculate_bpm(peaks, fs=fs)
 sdnn, rmssd = calculate_hrv(peaks, fs=fs)
+total_samples = len(filtered)
+samples_per_window = int(fs * window_size)
 
 # ── METRICS ──
 col1, col2, col3, col4 = st.columns(4)
@@ -128,32 +125,20 @@ with col4:
 
 st.markdown("---")
 
-# ── PLAYBACK ──
-st.subheader("📈 ECG Waveform — Live Playback")
+# ── STATIC WAVEFORM (no blinking) ──
+st.subheader("📈 ECG Waveform")
 
-speed_map = {"0.5x": 2000, "1x": 1000, "2x": 500, "4x": 250}
-delay_ms = speed_map[playback_speed]
+# Slider to scrub through the signal manually
+position = st.slider(
+    "Scrub through signal",
+    min_value=0,
+    max_value=max(0, total_samples - samples_per_window),
+    value=0,
+    step=int(fs * 0.5),
+    format="%d samples"
+)
 
-if 'play' not in st.session_state:
-    st.session_state.play = False
-if 'position' not in st.session_state:
-    st.session_state.position = 0
-
-col_play, col_pause, col_reset = st.columns(3)
-with col_play:
-    if st.button("▶️ Play", type="primary"):
-        st.session_state.play = True
-with col_pause:
-    if st.button("⏸️ Pause"):
-        st.session_state.play = False
-with col_reset:
-    if st.button("🔄 Reset"):
-        st.session_state.position = 0
-        st.session_state.play = False
-
-samples_per_window = int(fs * window_size)
-total_samples = len(filtered)
-start = st.session_state.position
+start = position
 end = min(start + samples_per_window, total_samples)
 
 disp_filtered = filtered[start:end]
@@ -169,9 +154,12 @@ if show_raw:
 fig.add_trace(go.Scatter(x=disp_times, y=disp_filtered, mode='lines',
                          name='Filtered ECG', line=dict(color='#2ecc71', width=1.5)))
 if len(peaks_in_window) > 0:
-    fig.add_trace(go.Scatter(x=disp_times[peaks_in_window], y=disp_filtered[peaks_in_window],
-                             mode='markers', name='R-peaks',
-                             marker=dict(color='red', size=10, symbol='triangle-down')))
+    fig.add_trace(go.Scatter(
+        x=disp_times[peaks_in_window],
+        y=disp_filtered[peaks_in_window],
+        mode='markers', name='R-peaks',
+        marker=dict(color='red', size=10, symbol='triangle-down')
+    ))
 fig.update_layout(
     height=380, showlegend=True,
     xaxis_title="Time (seconds)", yaxis_title="ADC Value",
@@ -184,14 +172,30 @@ fig.update_layout(
 st.plotly_chart(fig, use_container_width=True)
 st.progress(min(int((start / total_samples) * 100), 100))
 
-# ── AUTO-ADVANCE (no time.sleep) ──
-if st.session_state.play:
-    step = int(fs * 0.5)
-    next_pos = st.session_state.position + step
-    if next_pos >= total_samples - samples_per_window:
-        next_pos = 0
-    st.session_state.position = next_pos
-    st.rerun()
+st.markdown("---")
+
+# ── FULL SIGNAL VIEW ──
+with st.expander("📉 View Full Signal"):
+    fig2 = go.Figure()
+    fig2.add_trace(go.Scatter(
+        x=timestamps, y=filtered, mode='lines',
+        name='Full ECG', line=dict(color='#2ecc71', width=0.8)
+    ))
+    if len(peaks) > 0:
+        fig2.add_trace(go.Scatter(
+            x=timestamps[peaks], y=filtered[peaks],
+            mode='markers', name='R-peaks',
+            marker=dict(color='red', size=6, symbol='triangle-down')
+        ))
+    fig2.update_layout(
+        height=250, showlegend=True,
+        xaxis_title="Time (seconds)", yaxis_title="ADC Value",
+        plot_bgcolor='#0e1117', paper_bgcolor='#0e1117',
+        font=dict(color='white'),
+        xaxis=dict(gridcolor='#333333'), yaxis=dict(gridcolor='#333333'),
+        margin=dict(l=60, r=20, t=10, b=40)
+    )
+    st.plotly_chart(fig2, use_container_width=True)
 
 st.markdown("---")
 

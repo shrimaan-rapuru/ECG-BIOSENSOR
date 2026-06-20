@@ -5,7 +5,6 @@ A low-cost, real-time ECG signal acquisition and analysis platform built from a 
 > Built a $90.78 ECG biosensing platform that achieved 96.3% R-peak detection accuracy and identified a heart-rate-dependent performance limitation through multi-subject validation.
 
 **🔗 Live Dashboard:** [ecg-biosensor.streamlit.app](https://ecg-biosensor.streamlit.app)
-**📄 Manuscript:** Submitted to *Journal of Student Research* (2026)
 
 ![ECG Biosensor Dashboard](./assets/dashboard_screenshot.png)
 

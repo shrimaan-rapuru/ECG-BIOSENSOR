@@ -5,6 +5,7 @@ A low-cost, real-time ECG signal acquisition and analysis platform built from a 
 > Built a $90.78 ECG biosensing platform that achieved 96.3% R-peak detection accuracy and identified a heart-rate-dependent performance limitation through multi-subject validation.
 
 **🔗 Live Dashboard:** [ecg-biosensor.streamlit.app](https://ecg-biosensor.streamlit.app)
+**📄 Manuscript:** Submitted to *Journal of Student Research* (2026)
 
 ![ECG Biosensor Dashboard](./assets/dashboard_screenshot.png)
 
@@ -99,7 +100,7 @@ ecg-biosensor/
 | Misc. (breadboard, headers, prep pads) | — | $21.48 |
 | **Total** | | **$90.78** |
 
-A custom 2-layer PCB (140 × 56.5 mm, FR-4, LeadFree HASL) was designed in KiCad following the AD8232 datasheet reference design. Fabrication files have been submitted to JLCPCB; board assembly and validation are planned for Phase 2. See [`hardware/`](./hardware) for the schematic, PCB layout, and Gerber files.
+A custom 2-layer PCB (140 × 56.5 mm, FR-4, LeadFree HASL) was designed in KiCad following the AD8232 datasheet reference design. Fabrication files were submitted to JLCPCB; boards were received June 13, 2026. Assembly and Phase 2 validation are in progress. See [`hardware/`](./hardware) for the schematic, PCB layout, and Gerber files.
 
 ---
 
@@ -147,6 +148,18 @@ BPM measurements were validated against simultaneous Apple Watch Series 8 record
 - Extended multi-subject study (N ≥ 20)
 - Benchmarking against a clinical-grade ECG or Holter monitor
 - Bluetooth wireless data acquisition
+
+---
+
+## Phase 2 — Hardware Assembly (In Progress)
+
+Custom PCB (Rev A) received from JLCPCB on June 13, 2026.
+
+| Bare PCB | Shipment Packaging |
+|---|---|
+| ![PCB](./hardware/pcb_renders/board_photo.png) | ![Packaging](./hardware/pcb_renders/board_arrival.png) |
+
+Assembly and Phase 2 validation against the breadboard prototype are in progress.
 
 ---
 

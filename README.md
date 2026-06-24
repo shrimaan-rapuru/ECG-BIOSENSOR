@@ -155,7 +155,7 @@ BPM measurements were validated against simultaneous Apple Watch Series 8 record
 
 Custom PCB (Rev A) received from JLCPCB on June 13, 2026.
 
-| Bare PCB | Shipment Packaging |
+| Shipment Packaging | Bare PCB |
 |---|---|
 | ![PCB](./hardware/pcb_renders/board_photo.png) | ![Packaging](./hardware/pcb_renders/board_arrival.png) |
 

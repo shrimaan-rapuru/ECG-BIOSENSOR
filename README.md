@@ -220,7 +220,25 @@ Phase 2 (In Progress)
 
 ---
 
-## Phase 2 — Hardware Assembly (In Progress)
+## Release History
+
+| Version | Milestone |
+|---|---|
+| **v0.1** | Basic Arduino serial read — raw ECG signal to terminal |
+| **v0.2** | Moving average filter applied — first visible QRS complex |
+| **v0.3** | Butterworth bandpass + IIR notch pipeline — clean PQRST morphology |
+| **v0.4** | Adaptive threshold R-peak detection — 96.3% accuracy |
+| **v0.5** | HRV computation (SDNN, RMSSD) from RR intervals |
+| **v0.6** | Streamlit real-time dashboard deployed |
+| **v0.7** | Multi-subject validation (N=6, 30 trials) |
+| **v0.8** | Apple Watch Series 8 validation — heart-rate-dependent bias identified |
+| **v1.0** | Manuscript submitted to Oxford Journal of Student Scholarship |
+| **v2.0** | Custom KiCad PCB (Rev A) — fabricated and received June 2026 |
+| **v2.1** | PCB assembly and Phase 2 validation *(in progress)* |
+
+---
+
+
 
 Custom PCB (Rev A) received from JLCPCB on June 13, 2026.
 

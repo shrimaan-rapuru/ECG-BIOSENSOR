@@ -5,7 +5,7 @@ A low-cost, real-time ECG signal acquisition and analysis platform built from a 
 > Built a $90.78 ECG biosensing platform that achieved 96.3% R-peak detection accuracy and identified a heart-rate-dependent performance limitation through multi-subject validation.
 
 **🔗 Live Dashboard:** [ecg-biosensor.streamlit.app](https://ecg-biosensor.streamlit.app)
-**📄 Manuscript:** In peer review, *Oxford Journal of Student Scholarship* (2026)
+**📄 Manuscript:** Submitted to *Oxford Journal of Student Scholarship* (2026)
 
 ![ECG Biosensor Dashboard](./assets/dashboard_screenshot.png)
 
@@ -155,9 +155,9 @@ BPM measurements were validated against simultaneous Apple Watch Series 8 record
 
 Custom PCB (Rev A) received from JLCPCB on June 13, 2026.
 
-| Shipment Packaging | Bare PCB |
+| Bare PCB | Shipment Packaging |
 |---|---|
-| ![PCB](./hardware/pcb_renders/board_photo.png) | ![Packaging](./hardware/pcb_renders/board_arrival.png) |
+| ![PCB](./hardware/pcb_renders/board_photo.jpeg) | ![Packaging](./hardware/pcb_renders/board_arrival.jpeg) |
 
 Assembly and Phase 2 validation against the breadboard prototype are in progress.
 

@@ -148,6 +148,75 @@ BPM measurements were validated against simultaneous Apple Watch Series 8 record
 - Extended multi-subject study (N ≥ 20)
 - Benchmarking against a clinical-grade ECG or Holter monitor
 - Bluetooth wireless data acquisition
+- ML-based arrhythmia classification
+- Battery-powered wearable enclosure
+
+---
+
+## Engineering Design Decisions
+
+| Decision | Rationale |
+|---|---|
+| **AD8232 analog front-end** | Integrated instrumentation amplifier, RLD circuit, and onboard filtering in a single low-cost package ($24.41) |
+| **Arduino Uno R4 Minima** | 14-bit ADC resolution and 48 MHz processor provide higher fidelity than Uno R3; native USB serial reliability |
+| **4th-order Butterworth bandpass (0.5–40 Hz)** | Flat passband preserves P-wave morphology; zero-phase (filtfilt) eliminates timing distortion in batch analysis |
+| **IIR notch filter (60 Hz, Q=30)** | Narrow rejection band removes powerline interference without attenuating adjacent ECG frequencies |
+| **Adaptive threshold (median + 0.5 × SD)** | Scales automatically with signal amplitude across subjects and sessions; more robust than fixed thresholds |
+| **533.3 Hz sampling rate** | Empirically measured (not assumed); exceeds the 250 Hz minimum for reliable QRS detection at 100 BPM |
+| **KiCad for PCB design** | Open-source, industry-standard EDA tool with Python scripting API for automated layout |
+| **Streamlit for dashboard** | Rapid deployment with zero frontend code; cloud-hosted for accessibility without hardware |
+
+---
+
+## Development Timeline
+
+```
+Phase 1 (Spring–Summer 2026)
+│
+├── Hardware assembly — breadboard prototype
+│   AD8232 + Arduino Uno R4 Minima + Ag/AgCl electrodes
+│
+├── Signal processing pipeline
+│   Butterworth bandpass → IIR notch → adaptive R-peak detection → HRV
+│
+├── Experiment 1 — Resting vs. exercise vs. recovery (N=5 trials)
+│
+├── Experiment 2 — Electrode placement robustness (4 conditions)
+│
+├── Experiment 3 — Filter algorithm comparison (3 algorithms)
+│
+├── Multi-subject validation — N=6 subjects, 30 resting trials
+│
+├── Apple Watch Series 8 validation — N=25 paired readings
+│   Key finding: heart-rate-dependent bias identified
+│
+├── Streamlit dashboard deployed
+│   ecg-biosensor.streamlit.app
+│
+├── KiCad PCB design (Rev A)
+│   140 × 56.5 mm, 2-layer FR-4, LeadFree HASL
+│
+├── Manuscript submitted to Oxford Journal of Student Scholarship
+│   Passed editorial screening → entered formal peer review
+│
+Phase 2 (In Progress)
+│
+├── PCB boards received from JLCPCB — June 13, 2026
+│
+└── Assembly and Phase 2 validation — pending
+```
+
+---
+
+## Lessons Learned
+
+**Subject 7 exposed a real limitation:** Subject 7's resting heart rate fell below 65 BPM, causing near-complete detection failure. Rather than excluding this data point, it was retained as a documented failure case — revealing that the static threshold algorithm has a hard lower bound on reliable performance. This became the central scientific contribution of the paper.
+
+**The SNR paradox:** Standard SNR metrics penalized the Butterworth filter despite its superior morphological output. The raw signal's dominant DC offset and 60 Hz component inflate Moving Average SNR artificially. This showed that domain-specific evaluation metrics matter more than generic signal metrics for ECG filter quality.
+
+**PCB design is iterative:** The initial KiCad layout had 52 DRC violations from component overlap and clearance errors. Resolving these iteratively — rather than starting over — taught systematic debugging of hardware design files.
+
+**Breadboard instability is a real experimental confound:** Motion artifact during post-exercise recording was severe enough to invalidate the filtered pipeline. The custom PCB directly addresses this limitation by eliminating loose wire connections.
 
 ---
 
